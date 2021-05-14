@@ -11,3 +11,4 @@
 *.model
 *.dict
 *.list
+**.ipynb_checkpoints
