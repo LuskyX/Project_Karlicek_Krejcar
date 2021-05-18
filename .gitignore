@@ -12,3 +12,4 @@
 *.dict
 *.list
 **.ipynb_checkpoints
+.DS_Store
