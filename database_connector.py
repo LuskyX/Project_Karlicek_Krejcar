@@ -1,13 +1,15 @@
 import sqlite3
 from sqlite3 import Error
+from config import DB_FILE
 
-DB_FILE = "db/database.db"
 
 class DatabaseConnector():
-    def __init__(self, DB_FILE):
+    db_file = DB_FILE
+
+    def __init__(self):
         self.conn = None
         try:
-            self.conn = sqlite3.connect(DB_FILE)
+            self.conn = sqlite3.connect(self.db_file)
         except Error as e:
             print(e)
         self.cur = self.conn.cursor()
@@ -35,7 +37,7 @@ class DatabaseConnector():
         return data
 
 if __name__ == '__main__':
-    db = DatabaseConnector(DB_FILE)
+    db = DatabaseConnector()
     db.create_example_table()
     db.insert_data_into_example_table(1, 'Pepa', 'Pfizer')
     db.insert_data_into_example_table(2, 'Franta', 'Moderna')
