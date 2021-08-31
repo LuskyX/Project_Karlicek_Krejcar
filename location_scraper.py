@@ -17,13 +17,22 @@ def scrape_dataset() -> pd.DataFrame:
 
     """
     url = "https://cs.wikipedia.org/"
+    url_prague = "https://cs.wikipedia.org/wiki/Praha"
     r = requests.get("https://cs.wikipedia.org/wiki/Seznam_obc%C3%AD_v_Česku")
+    r_prague = requests.get(url_prague)
     soup = BeautifulSoup(r.text.strip())
+    soup_prague = BeautifulSoup(r_prague.text.strip())
+    table_prague = soup_prague.findAll('table', {"class": "wikitable"})[3]
     data = []
     links = []
     for region in soup.select('td[class="navbox-list navbox-odd"]'):
         links.extend(region.div.find_all('a'))
+    for prague_parts in table_prague.select("tr > td:nth-child(3)"):
+        links.extend(prague_parts.find_all('a'))
+
+
     links = [url + i['href'] for i in links]
+    links.append(url_prague)
     print(f"Number of town availiable is: {len(links)}")
     i = 1
     for town in links:
