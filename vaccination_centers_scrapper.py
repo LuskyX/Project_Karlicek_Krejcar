@@ -26,6 +26,7 @@ class VaccCentersScraper():
 
     def get_information_about_centers(self):
         for center in self.vacc_centers:
+            print(center.link)
             soup = BeautifulSoup(requests.get(center.link).text.strip())
             center.add_info(self._extract_info_from_soup(soup))
             center.add_open_hours(self._extract_open_hours_from_soup(soup))
@@ -38,13 +39,16 @@ class VaccCentersScraper():
         for center in centers_div:
             images = center.find_all('img')
             if 'Bez registrace' in [img['title'] for img in images]:
-                name = center.select_one('span[class=center__name]').text
-                link = self.url + center.a['href']
-                self.vacc_centers.append(VaccCenter(name, region, link))
+                no_registration = 1
+            else:
+                no_registration = 0
+            name = center.select_one('span[class=center__name]').text
+            link = self.url + center.a['href']
+            self.vacc_centers.append(VaccCenter(name, region, link, no_registration))
         return None
 
-
-    def _extract_info_from_soup(self, soup):
+    @staticmethod
+    def _extract_info_from_soup(soup):
         table_info = soup.select('div[class=info] > table > tbody > tr')
         info = {i.select_one('td:nth-child(1)').text: i.select_one('td:nth-child(2)').text.replace("\r\n", "")
                 for i in table_info[0:4]}
@@ -61,10 +65,18 @@ class VaccCentersScraper():
                                                             table_info[8].select_one('td:nth-child(2)' ).select('div')]
         return info
 
-    def _extract_open_hours_from_soup(self, soup):
+    @staticmethod
+    def _extract_open_hours_from_soup(soup):
         open_table = soup.select('div[class=detail__aside] > div[class=opening] > table > tbody > tr')
         open_table = {i.select_one('td:nth-child(1)').text: i.select_one('td:nth-child(2)').text.strip().replace(" ", "")
                       for i in open_table}
+        for day in open_table:
+            hours = open_table[day].split("-")
+            if hours[0] in ["Zavřeno", "Žádnádata"]:
+                open_table[day] = [None, None]
+            else:
+                open_table[day] = [float(hours[0][:2]) + (float(hours[0][3:]) / 60),
+                                   float(hours[1][:2]) + (float(hours[1][3:]) / 60)]
         return open_table
 
 

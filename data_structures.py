@@ -1,8 +1,9 @@
 class VaccCenter():
-    def __init__(self, name, region, link):
+    def __init__(self, name, region, link, no_registration):
         self.name = name
         self.region = region
         self.link = link
+        self.no_registration = no_registration
         self.info = {}
         self.open_hours = {}
 
