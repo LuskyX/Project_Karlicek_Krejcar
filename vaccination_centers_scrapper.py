@@ -1,15 +1,16 @@
 import mechanicalsoup
 import requests
 import copy
+import pandas as pd
 from bs4 import BeautifulSoup
 from time import sleep
-from config import URL_VACCENTERS, REGIONS, CENTER_TYPE, VACCINES
+from config import URL_VACCENTERS, REGIONS, CENTER_TYPE, VACCINES, CSV_VACCENTERS, ADRESA2GPS
 from data_structures import VaccCenter
 
 class VaccCentersScraper():
     url = URL_VACCENTERS
 
-    def __init__(self, regions=REGIONS[:1]):
+    def __init__(self, regions=REGIONS):
         self.regions = regions
         self.vacc_centers = []
 
@@ -27,12 +28,28 @@ class VaccCentersScraper():
 
     def get_information_about_centers(self):
         for center in self.vacc_centers:
-            print(center.link)
             soup = BeautifulSoup(requests.get(center.link).text.strip())
             center.add_info(self._extract_info_from_soup(soup))
             center.add_open_hours(self._extract_open_hours_from_soup(soup))
             center.add_vaccines(self._extract_vaccines(center.info))
             sleep(0.5)
+        return None
+
+    def get_gps_of_centers(self):
+        data = pd.read_csv(CSV_VACCENTERS)[['ockovaci_misto_id', 'latitude', 'longitude']].set_index('ockovaci_misto_id')
+        vacc_ids = set(data.index)
+        no_data = []
+        for i in range(len(self.vacc_centers)):
+            if self.vacc_centers[i].vacc_id in vacc_ids:
+                gps = tuple(data.loc[self.vacc_centers[i].vacc_id])
+                self.vacc_centers[i].add_gps(gps)
+                ADRESA2GPS[self.vacc_centers[i].info['Adresa']] = gps
+            else:
+                no_data.append(i)
+        for i in no_data:
+            if self.vacc_centers[i].info['Adresa'] in ADRESA2GPS:
+                self.vacc_centers[i].add_gps(ADRESA2GPS[self.vacc_centers[i].info['Adresa']])
+        self.vacc_centers = [center for center in self.vacc_centers if len(center.gps) != 0]
         return None
 
     def _extract_links_from_soup(self, soup, region):
@@ -107,6 +124,7 @@ if __name__ == '__main__':
     v = VaccCentersScraper()
     v.get_links()
     v.get_information_about_centers()
+    v.get_gps_of_centers()
     centers = v.vacc_centers
     centers[17].name
     centers[17].region
@@ -116,3 +134,4 @@ if __name__ == '__main__':
     centers[17].info
     centers[17].open_hours
     centers[17].vaccines
+    centers[17].gps

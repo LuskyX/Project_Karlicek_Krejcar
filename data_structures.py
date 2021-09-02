@@ -8,6 +8,7 @@ class VaccCenter():
         self.info = {}
         self.open_hours = {}
         self.vaccines = {}
+        self.gps = tuple()
 
     def add_center_type(self, center_type):
         self.center_type = center_type
@@ -20,6 +21,9 @@ class VaccCenter():
 
     def add_vaccines(self, vaccines):
         self.vaccines = vaccines
+
+    def add_gps(self, gps):
+        self.gps = gps
 
     def __repr__(self):
         return f"VaccCenter({self.name})"
