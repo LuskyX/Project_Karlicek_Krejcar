@@ -27,3 +27,12 @@ class VaccCenter():
 
     def __repr__(self):
         return f"VaccCenter({self.name})"
+
+
+class Location:
+    def __init__(self, name, gps):
+        self.name = name
+        self.gps = gps
+
+    def __repr__(self):
+        return f"Location({self.name})"

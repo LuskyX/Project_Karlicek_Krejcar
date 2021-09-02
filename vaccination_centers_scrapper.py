@@ -4,8 +4,9 @@ import copy
 import pandas as pd
 from bs4 import BeautifulSoup
 from time import sleep
+from tqdm import tqdm
 from config import URL_VACCENTERS, REGIONS, CENTER_TYPE, VACCINES, CSV_VACCENTERS, ADRESA2GPS
-from data_structures import VaccCenter
+from data_classes import VaccCenter
 
 class VaccCentersScraper():
     url = URL_VACCENTERS
@@ -27,7 +28,7 @@ class VaccCentersScraper():
         return None
 
     def get_information_about_centers(self):
-        for center in self.vacc_centers:
+        for center in tqdm(self.vacc_centers):
             soup = BeautifulSoup(requests.get(center.link).text.strip())
             center.add_info(self._extract_info_from_soup(soup))
             center.add_open_hours(self._extract_open_hours_from_soup(soup))

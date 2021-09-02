@@ -10,8 +10,6 @@ REGIONS = ["Hlavní město Praha", "Jihočeský", "Jihomoravský", "Karlovarský
 CENTER_TYPE = {"18+": 0, "16-17": 0, "12-15": 0, "without_registration": 0, "self-payers": 0}
 VACCINES = {'COMIRNATY':0, 'SPIKEVAX': 0, 'JANSSEN': 0, 'Vaxzevria': 0}
 
-
-# latitude longitude
 ADRESA2GPS = {'Londýnská 160/39, Praha 2': (50.07685127162937, 14.432848113734048),
               'Wilsonova 300/8, 11000 Praha 2 - Vinohrady': (50.08330619236537, 14.435705199748115),
               'Plzeňská 8, 150 00 Praha 5 - Smíchov, 150 00': (50.07330618231973, 14.402896328584372),
@@ -32,3 +30,9 @@ ADRESA2GPS = {'Londýnská 160/39, Praha 2': (50.07685127162937, 14.432848113734
               'PSG Aréna, Březnická 5513, 760 01 Zlín': (49.2179394741856, 17.659829294148217),
               'Obchodní 1507, 686 01 Uherské Hradiště': (49.06977144158275, 17.46353272854849),
               'Dukelská tř. 1713/7, Hradec Králové, 500 02': (50.21351993055662, 15.818755694183947)}
+
+# locations scrapper
+BASE_URL = "https://cs.wikipedia.org/"
+PRAGUE_URL = "wiki/Praha"
+LOCATIONS_URL = "wiki/Seznam_obcí_v_Česku"
+WRONG_WIKI = {"Těšetice (okres Znojmo)": (48.888845, 16.158202)}
