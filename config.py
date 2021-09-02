@@ -6,6 +6,9 @@ URL_VACCENTERS = 'https://ockoreport.uzis.cz'
 REGIONS = ["Hlavní město Praha", "Jihočeský", "Jihomoravský", "Karlovarský", "Liberecký",
         "Moravskoslezský", "Olomoucký", "Pardubický", "Plzeňský", "Středočeský", "Ústecký",
         "Vysočina", "Zlínský", "Královéhradecký"]
+CENTER_TYPE = {"18+": 0, "16-17": 0, "12-15": 0, "without_registration": 0, "self-payers": 0}
+VACCINES = {'COMIRNATY':0, 'SPIKEVAX': 0, 'JANSSEN': 0, 'Vaxzevria': 0}
+
 
 # latitude longitude
 adresa2gps = {'Londýnská 160/39, Praha 2': [50.07685127162937, 14.432848113734048],
