@@ -2,6 +2,10 @@ import heapq as hq
 from geopy import distance
 
 
+def main(location, vaccine=None, age_group="adult", without_registration=None, self_payer=False, monday=False,
+         tuesday=False, wednesday=False, thursday=False, friday=False, saturday=False, sunday=False, update=False):
+    pass
+
 
 def three_closest_centers(coords: tuple, other_centers: list, display_distances: bool = False) -> list:
     """
