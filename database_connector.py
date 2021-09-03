@@ -17,66 +17,13 @@ class DatabaseConnector():
             self._drop_tables()
             self._create_tables()
 
-    def insert_into_vacc_center(self, vacc_id, name, region, link):
-        query = """
-            INSERT INTO vacc_center (vacc_id, name, region, link)
-            VALUES (?, ?, ?, ?);
-            """
-        self.cur.execute(query, (vacc_id, name, region, link))
-        self.conn.commit()
-
-    def insert_into_vacc_center_type(self, vacc_id, center_type):
-        query = """
-            INSERT INTO vacc_center_type (vacc_id, adult, teenage, child, without_registration, self_payers)
-            VALUES (?, ?, ?, ?, ?, ?);
-            """
-        self.cur.execute(query, (vacc_id, center_type['adult'], center_type['teenage'], center_type['child'],
-                                 center_type['without_registration'], center_type['self_payers']))
-        self.conn.commit()
-
-    def insert_into_vacc_center_vaccines(self, vacc_id, vaccines):
-        query = """
-            INSERT INTO vacc_center_vaccines (vacc_id, comirnaty, spikevax, jannsen, vaxzevria)
-            VALUES (?, ?, ?, ?, ?);
-            """
-        self.cur.execute(query, (vacc_id, vaccines['COMIRNATY'], vaccines['SPIKEVAX'],
-                                 vaccines['JANSSEN'], vaccines['Vaxzevria']))
-        self.conn.commit()
-
-    def insert_into_vacc_center_location(self, vacc_id, gps):
-        query = """
-            INSERT INTO vacc_center_location (vacc_id, latitude, longitude)
-            VALUES (?, ?, ?);
-            """
-        self.cur.execute(query, (vacc_id, gps[0], gps[1]))
-        self.conn.commit()
-
-    def insert_into_vacc_center_hours(self, vacc_id, open_hours):
-        query = """
-            INSERT INTO vacc_center_hours (vacc_id, monday_open, monday_closed, tuesday_open, tuesday_closed, wednesday_open, 
-                wednesday_closed, thursday_open, thursday_closed, friday_open, friday_closed, saturday_open, 
-                saturday_closed, sunday_open, sunday_closed)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """
-        self.cur.execute(query, (vacc_id, open_hours['Pondělí'][0], open_hours['Pondělí'][0],
-                                 open_hours['Úterý'][0], open_hours['Úterý'][0],
-                                 open_hours['Středa'][0], open_hours['Středa'][0],
-                                 open_hours['Čtvrtek'][0], open_hours['Čtvrtek'][0],
-                                 open_hours['Pátek'][0], open_hours['Pátek'][0],
-                                 open_hours['Sobota'][0], open_hours['Sobota'][0],
-                                 open_hours['Neděle'][0], open_hours['Neděle'][0]))
-        self.conn.commit()
-
-    def insert_into_vacc_center_info(self, vacc_id, info):
-        query = """
-            INSERT INTO vacc_center_info (vacc_id, address, address_spec, phone, email, note,
-                vaccines, add_info, capacity, changing_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """
-        self.cur.execute(query, (vacc_id, info['Adresa'], info['Upřesnění polohy'], info['Telefon'], info['Email'],
-                                 info['Poznámka'], info['Vakcíny'], info['Dodatečné informace'],
-                                 info['Denní kapacita očkování'], info['Způsob změny termínu druhé dávky vakcíny']))
-        self.conn.commit()
+    def insert_vacc_center(self, center):
+        self._insert_into_vacc_center(center.vacc_id, center.name, center.region, center.link)
+        self._insert_into_vacc_center_type(center.vacc_id, center.center_type)
+        self._insert_into_vacc_center_vaccines(center.vacc_id, center.vaccines)
+        self._insert_into_vacc_center_hours(center.vacc_id, center.open_hours)
+        self._insert_into_vacc_center_location(center.vacc_id, center.gps)
+        self._insert_into_vacc_center_info(center.vacc_id, center.info)
 
     def insert_into_locations(self, name, gps):
         query = """
@@ -90,6 +37,67 @@ class DatabaseConnector():
         self.cur.execute(query)
         data = self.cur.fetchall()
         return data
+
+    def _insert_into_vacc_center(self, vacc_id, name, region, link):
+        query = """
+            INSERT INTO vacc_center (vacc_id, name, region, link)
+            VALUES (?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, name, region, link))
+        self.conn.commit()
+
+    def _insert_into_vacc_center_type(self, vacc_id, center_type):
+        query = """
+            INSERT INTO vacc_center_type (vacc_id, adult, teenage, child, without_registration, self_payers)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, center_type['adult'], center_type['teenage'], center_type['child'],
+                                 center_type['without_registration'], center_type['self_payers']))
+        self.conn.commit()
+
+    def _insert_into_vacc_center_vaccines(self, vacc_id, vaccines):
+        query = """
+            INSERT INTO vacc_center_vaccines (vacc_id, comirnaty, spikevax, janssen, vaxzevria)
+            VALUES (?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, vaccines['COMIRNATY'], vaccines['SPIKEVAX'],
+                                 vaccines['JANSSEN'], vaccines['Vaxzevria']))
+        self.conn.commit()
+
+    def _insert_into_vacc_center_location(self, vacc_id, gps):
+        query = """
+            INSERT INTO vacc_center_location (vacc_id, latitude, longitude)
+            VALUES (?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, gps[0], gps[1]))
+        self.conn.commit()
+
+    def _insert_into_vacc_center_hours(self, vacc_id, open_hours):
+        query = """
+            INSERT INTO vacc_center_hours (vacc_id, monday_open, monday_closed, tuesday_open, tuesday_closed, wednesday_open, 
+                wednesday_closed, thursday_open, thursday_closed, friday_open, friday_closed, saturday_open, 
+                saturday_closed, sunday_open, sunday_closed)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, open_hours['Pondělí'][0], open_hours['Pondělí'][1],
+                                 open_hours['Úterý'][0], open_hours['Úterý'][1],
+                                 open_hours['Středa'][0], open_hours['Středa'][1],
+                                 open_hours['Čtvrtek'][0], open_hours['Čtvrtek'][1],
+                                 open_hours['Pátek'][0], open_hours['Pátek'][1],
+                                 open_hours['Sobota'][0], open_hours['Sobota'][1],
+                                 open_hours['Neděle'][0], open_hours['Neděle'][1]))
+        self.conn.commit()
+
+    def _insert_into_vacc_center_info(self, vacc_id, info):
+        query = """
+            INSERT INTO vacc_center_info (vacc_id, address, address_spec, phone, email, note,
+                vaccines, add_info, capacity, changing_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, info['Adresa'], info['Upřesnění polohy'], info['Telefon'], info['Email'],
+                                 info['Poznámka'], str(info['Vakcíny'])[1: -1], str(info['Dodatečné informace'])[1: -1],
+                                 info['Denní kapacita očkování'], str(info['Způsob změny termínu druhé dávky vakcíny'])[1: -1]))
+        self.conn.commit()
 
     def _create_tables(self):
         queries = [""" CREATE TABLE IF NOT EXISTS vacc_center (

@@ -32,7 +32,7 @@ def create_query(vaccine=None, age_group="adult", without_registration=None, sel
         query += "INNER JOIN vacc_center_hours as hour USING(vacc_id) \n"
         list_hours = []
         for (day, hour) in open_hours.items():
-            if (hour < 0) or (hour > 24): raise Exception()
+            if not ((hour >= 0) and (hour <= 24)): raise Exception()
             list_hours.append(f"(hour.{day}_open <= {hour} AND hour.{day}_closed >= {hour})")
 
         query_hours = "AND ("

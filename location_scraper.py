@@ -26,11 +26,11 @@ class LocationsScrapper:
 
     def get_links(self):
         '''
-        soup = BeautifulSoup(requests.get(self.locations_url).text.strip())
+        soup = BeautifulSoup(requests.get(self.locations_url).text.strip(), features="lxml")
         for region in soup.select('td[class="navbox-list navbox-odd"]'):
             self.links.extend(region.div.find_all('a'))
         '''
-        soup_prague = BeautifulSoup(requests.get(self.url_prague).text.strip())
+        soup_prague = BeautifulSoup(requests.get(self.url_prague).text.strip(), features="lxml")
         table_prague = soup_prague.findAll('table', {"class": "wikitable"})[3]
         for prague_parts in table_prague.select("tr > td:nth-child(3)"):
             self.links.extend(prague_parts.find_all('a'))
@@ -41,7 +41,7 @@ class LocationsScrapper:
 
     def get_gps(self):
         for link in tqdm(self.links):
-            soup = BeautifulSoup(requests.get(link).text.strip())
+            soup = BeautifulSoup(requests.get(link).text.strip(), features="lxml")
             name = soup.h1.text
             if name in WRONG_WIKI:
                 # town Těšetice has different Wiki page structure, and thus we weren't able to add it into the scraper
@@ -81,8 +81,3 @@ class LocationsScrapper:
         result += minutes / 60
         result += seconds / 3600
         return result
-
-if __name__ == '__main__':
-    l = LocationsScrapper()
-    l.get_links()
-    l.get_gps()

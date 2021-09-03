@@ -40,3 +40,13 @@ WRONG_WIKI = {"Těšetice (okres Znojmo)": (48.888845, 16.158202)}
 # query_creator
 VACCINES_SET = set([vac.lower() for vac in VACCINES])
 AGE_GROUP_SET = set(["adult", "teenage", "child"])
+
+# main
+FINAL_QUERY = """SELECT vacc_id, name, region, link, monday_open, monday_closed, tuesday_open, tuesday_closed,
+                wednesday_open, wednesday_closed, thursday_open, thursday_closed, friday_open, friday_closed, 
+                saturday_open, saturday_closed, sunday_open, sunday_closed, address, address_spec, phone, email,
+                note, vaccines, add_info, capacity, changing_date
+                FROM vacc_center
+                INNER JOIN vacc_center_hours USING(vacc_id)
+                INNER JOIN vacc_center_info USING (vacc_id)
+                WHERE vacc_id = """
