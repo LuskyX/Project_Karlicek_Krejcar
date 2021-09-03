@@ -36,3 +36,7 @@ BASE_URL = "https://cs.wikipedia.org/"
 PRAGUE_URL = "wiki/Praha"
 LOCATIONS_URL = "wiki/Seznam_obcí_v_Česku"
 WRONG_WIKI = {"Těšetice (okres Znojmo)": (48.888845, 16.158202)}
+
+# query_creator
+VACCINES_SET = set([vac.lower() for vac in VACCINES])
+AGE_GROUP_SET = set(["adult", "teenage", "child"])

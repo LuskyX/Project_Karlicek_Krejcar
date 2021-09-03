@@ -110,7 +110,7 @@ class DatabaseConnector():
                     vacc_id TEXT PRIMARY KEY,
                     comirnaty INTEGER,
                     spikevax INTEGER,
-                    jannsen INTEGER,
+                    janssen INTEGER,
                     vaxzevria INTEGER
                     ); """,
                    """ CREATE TABLE IF NOT EXISTS vacc_center_location (
