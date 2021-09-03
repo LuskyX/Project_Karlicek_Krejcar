@@ -11,7 +11,7 @@ from data_classes import VaccCenter
 class VaccCentersScraper():
     url = URL_VACCENTERS
 
-    def __init__(self, regions=REGIONS):
+    def __init__(self, regions=REGIONS[:1]):
         self.regions = regions
         self.vacc_centers = []
 
@@ -72,13 +72,13 @@ class VaccCentersScraper():
         if 'Bez registrace' in types:
             center_type['without_registration'] = 1
         if 'Příjem samoplátců' in types:
-            center_type['self-payers'] = 1
+            center_type['self_payers'] = 1
         if 'Osoby starší 18 let' in types:
-            center_type['18+'] = 1
+            center_type['adult'] = 1
         if 'Osoby ve věku 16-17 let' in types:
-            center_type['16-17'] = 1
+            center_type['teenage'] = 1
         if 'Očkování dětí 12+' in types:
-            center_type['12-15'] = 1
+            center_type['child'] = 1
         return center_type
 
     @staticmethod
@@ -88,15 +88,15 @@ class VaccCentersScraper():
                 for i in table_info[0:4]}
         info['Poznámka'] = table_info[4].select_one('td:nth-child(2)').text.replace("\t", " ").replace("\r\n", "")
 
-        info['Vakcíny'] = [t.text for t in table_info[5].select_one('td:nth-child(2)').select('div[class=vaccineName]')]
+        info['Vakcíny'] = str([t.text for t in table_info[5].select_one('td:nth-child(2)').select('div[class=vaccineName]')])[1:-1]
 
-        info['Dodatečné informace'] = [t.text.replace("👨\u200d🦽 ", "") for t in
-                                       table_info[6].select_one('td:nth-child(2)').select('span')]
+        info['Dodatečné informace'] = str([t.text.replace("👨\u200d🦽 ", "") for t in
+                                       table_info[6].select_one('td:nth-child(2)').select('span')])[1:-1]
 
         info['Denní kapacita očkování'] = table_info[7].select_one('td:nth-child(2)').text.replace("\r\n", "")
 
-        info['Způsob změny termínu druhé dávky vakcíny'] = [t.text.replace('\n', '') for t in
-                                                            table_info[8].select_one('td:nth-child(2)' ).select('div')]
+        info['Způsob změny termínu druhé dávky vakcíny'] = str([t.text.replace('\n', '') for t in
+                                                            table_info[8].select_one('td:nth-child(2)').select('div')])[1:-1]
         return info
 
     @staticmethod
@@ -127,12 +127,12 @@ if __name__ == '__main__':
     v.get_information_about_centers()
     v.get_gps_of_centers()
     centers = v.vacc_centers
-    centers[17].name
-    centers[17].region
-    centers[17].link
-    centers[17].vacc_id
-    centers[17].center_type
-    centers[17].info
-    centers[17].open_hours
-    centers[17].vaccines
-    centers[17].gps
+    # centers[17].name
+    # centers[17].region
+    # centers[17].link
+    # centers[17].vacc_id
+    # centers[17].center_type
+    # centers[17].info
+    # centers[17].open_hours
+    # centers[17].vaccines
+    # centers[17].gps

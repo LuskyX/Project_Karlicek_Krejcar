@@ -6,40 +6,159 @@ from config import DB_FILE
 class DatabaseConnector():
     db_file = DB_FILE
 
-    def __init__(self):
+    def __init__(self, update=False):
         self.conn = None
         try:
             self.conn = sqlite3.connect(self.db_file)
         except Error as e:
             print(e)
         self.cur = self.conn.cursor()
+        if update:
+            self._drop_tables()
+            self._create_tables()
 
-    def create_example_table(self):
-        query = """ CREATE TABLE IF NOT EXISTS example (
-                    id integer PRIMARY KEY,
-                    name text NOT NULL,
-                    vaccine text
-                    ); """
-        self.cur.execute(query)
-
-    def insert_data_into_example_table(self, id, name, vaccine):
+    def insert_into_vacc_center(self, vacc_id, name, region, link):
         query = """
-            INSERT INTO example (id, name, vaccine)
-            VALUES (?, ?, ?)
+            INSERT INTO vacc_center (vacc_id, name, region, link)
+            VALUES (?, ?, ?, ?);
             """
-        self.cur.execute(query, (id, name, vaccine))
+        self.cur.execute(query, (vacc_id, name, region, link))
         self.conn.commit()
 
-    def read_table(self, query):
-        data = []
+    def insert_into_vacc_center_type(self, vacc_id, center_type):
+        query = """
+            INSERT INTO vacc_center_type (vacc_id, adult, teenage, child, without_registration, self_payers)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, center_type['adult'], center_type['teenage'], center_type['child'],
+                                 center_type['without_registration'], center_type['self_payers']))
+        self.conn.commit()
+
+    def insert_into_vacc_center_vaccines(self, vacc_id, vaccines):
+        query = """
+            INSERT INTO vacc_center_vaccines (vacc_id, comirnaty, spikevax, jannsen, vaxzevria)
+            VALUES (?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, vaccines['COMIRNATY'], vaccines['SPIKEVAX'],
+                                 vaccines['JANSSEN'], vaccines['Vaxzevria']))
+        self.conn.commit()
+
+    def insert_into_vacc_center_location(self, vacc_id, gps):
+        query = """
+            INSERT INTO vacc_center_location (vacc_id, latitude, longitude)
+            VALUES (?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, gps[0], gps[1]))
+        self.conn.commit()
+
+    def insert_into_vacc_center_hours(self, vacc_id, open_hours):
+        query = """
+            INSERT INTO vacc_center_hours (vacc_id, monday_open, monday_closed, tuesday_open, tuesday_closed, wednesday_open, 
+                wednesday_closed, thursday_open, thursday_closed, friday_open, friday_closed, saturday_open, 
+                saturday_closed, sunday_open, sunday_closed)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, open_hours['Pondělí'][0], open_hours['Pondělí'][0],
+                                 open_hours['Úterý'][0], open_hours['Úterý'][0],
+                                 open_hours['Středa'][0], open_hours['Středa'][0],
+                                 open_hours['Čtvrtek'][0], open_hours['Čtvrtek'][0],
+                                 open_hours['Pátek'][0], open_hours['Pátek'][0],
+                                 open_hours['Sobota'][0], open_hours['Sobota'][0],
+                                 open_hours['Neděle'][0], open_hours['Neděle'][0]))
+        self.conn.commit()
+
+    def insert_into_vacc_center_info(self, vacc_id, info):
+        query = """
+            INSERT INTO vacc_center_info (vacc_id, address, address_spec, phone, email, note,
+                vaccines, add_info, capacity, changing_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """
+        self.cur.execute(query, (vacc_id, info['Adresa'], info['Upřesnění polohy'], info['Telefon'], info['Email'],
+                                 info['Poznámka'], info['Vakcíny'], info['Dodatečné informace'],
+                                 info['Denní kapacita očkování'], info['Způsob změny termínu druhé dávky vakcíny']))
+        self.conn.commit()
+
+    def insert_into_locations(self, name, gps):
+        query = """
+            INSERT INTO locations (name, latitude, longitude)
+            VALUES (?, ?, ?);
+            """
+        self.cur.execute(query, (name, gps[0], gps[1]))
+        self.conn.commit()
+
+    def get_data(self, query):
         self.cur.execute(query)
         data = self.cur.fetchall()
         return data
 
-if __name__ == '__main__':
-    db = DatabaseConnector()
-    db.create_example_table()
-    db.insert_data_into_example_table(1, 'Pepa', 'Pfizer')
-    db.insert_data_into_example_table(2, 'Franta', 'Moderna')
+    def _create_tables(self):
+        queries = [""" CREATE TABLE IF NOT EXISTS vacc_center (
+                    vacc_id TEXT PRIMARY KEY,
+                    name TEXT,
+                    region TEXT,
+                    link TEXT
+                    ); """,
+                   """ CREATE TABLE IF NOT EXISTS vacc_center_type (
+                    vacc_id TEXT PRIMARY KEY,
+                    adult INTEGER,
+                    teenage INTEGER,
+                    child INTEGER,
+                    without_registration INTEGER,
+                    self_payers INTEGER
+                    ); """,
+                   """ CREATE TABLE IF NOT EXISTS vacc_center_vaccines (
+                    vacc_id TEXT PRIMARY KEY,
+                    comirnaty INTEGER,
+                    spikevax INTEGER,
+                    jannsen INTEGER,
+                    vaxzevria INTEGER
+                    ); """,
+                   """ CREATE TABLE IF NOT EXISTS vacc_center_location (
+                    vacc_id TEXT PRIMARY KEY,
+                    latitude REAL,
+                    longitude REAL
+                    ); """,
+                   """ CREATE TABLE IF NOT EXISTS vacc_center_hours (
+                    vacc_id TEXT PRIMARY KEY,
+                    monday_open REAL,
+                    monday_closed REAL,
+                    tuesday_open REAL,
+                    tuesday_closed REAL,
+                    wednesday_open REAL,
+                    wednesday_closed REAL,
+                    thursday_open REAL,
+                    thursday_closed REAL,
+                    friday_open REAL,
+                    friday_closed REAL,
+                    saturday_open REAL,
+                    saturday_closed REAL,
+                    sunday_open REAL,
+                    sunday_closed REAL
+                    ); """,
+                   """ CREATE TABLE IF NOT EXISTS vacc_center_info (
+                    vacc_id TEXT PRIMARY KEY,
+                    address TEXT,
+                    address_spec TEXT,
+                    phone TEXT,
+                    email TEXT,
+                    note TEXT,
+                    vaccines TEXT,
+                    add_info TEXT,
+                    capacity TEXT,
+                    changing_date TEXT
+                    ); """,
+                   """ CREATE TABLE IF NOT EXISTS locations (
+                    name TEXT PRIMARY KEY,
+                    latitude REAL,
+                    longitude REAL
+                    ); """]
+        for query in queries:
+            self.cur.execute(query)
 
-    db.read_table("SELECT * from example")
+    def _drop_tables(self):
+        tables = ['vacc_center', 'vacc_center_type', 'vacc_center_vaccines', 'vacc_center_location',
+                  'vacc_center_hours', 'vacc_center_info', 'locations']
+        for table in tables:
+            query = f"DROP table IF EXISTS {table};"
+            self.cur.execute(query)
+        self.conn.commit()

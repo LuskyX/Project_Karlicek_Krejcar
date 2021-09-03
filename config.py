@@ -7,7 +7,7 @@ CSV_VACCENTERS = 'https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/prehled-oc
 REGIONS = ["Hlavní město Praha", "Jihočeský", "Jihomoravský", "Karlovarský", "Liberecký",
         "Moravskoslezský", "Olomoucký", "Pardubický", "Plzeňský", "Středočeský", "Ústecký",
         "Vysočina", "Zlínský", "Královéhradecký"]
-CENTER_TYPE = {"18+": 0, "16-17": 0, "12-15": 0, "without_registration": 0, "self-payers": 0}
+CENTER_TYPE = {"adult": 0, "teenage": 0, "child": 0, "without_registration": 0, "self_payers": 0}
 VACCINES = {'COMIRNATY':0, 'SPIKEVAX': 0, 'JANSSEN': 0, 'Vaxzevria': 0}
 
 ADRESA2GPS = {'Londýnská 160/39, Praha 2': (50.07685127162937, 14.432848113734048),
