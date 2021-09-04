@@ -1,16 +1,5 @@
 *.csv
-*.npy
-*.png
-*.pkl
-*.geojson
-*.json
-*.html
-*.db
-*.h5
-*.xlsx
-*.model
-*.dict
-*.list
 **.ipynb_checkpoints
 *.DS_Store
 **.idea
+__pycache__

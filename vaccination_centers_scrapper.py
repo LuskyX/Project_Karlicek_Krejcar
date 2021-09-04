@@ -11,7 +11,7 @@ from data_classes import VaccCenter
 class VaccCentersScraper():
     url = URL_VACCENTERS
 
-    def __init__(self, regions=REGIONS[:1]):
+    def __init__(self, regions=REGIONS):
         self.regions = regions
         self.vacc_centers = []
 
@@ -119,9 +119,3 @@ class VaccCentersScraper():
                 open_table[day] = [float(hours[0][:2]) + (float(hours[0][3:]) / 60),
                                    float(hours[1][:2]) + (float(hours[1][3:]) / 60)]
         return open_table
-
-if __name__ == '__main__':
-    v = VaccCentersScraper()
-    v.get_links()
-    v.get_information_about_centers()
-    v.get_gps_of_centers()

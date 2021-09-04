@@ -6,6 +6,7 @@ from location_scraper import LocationsScrapper
 from query_creator import create_query
 from data_classes import VaccCenter
 from config import FINAL_QUERY
+from datetime import datetime
 
 
 def main(location="Praha 3", vaccine=None, age_group="adult", without_registration=None, self_payer=False, monday=None,
@@ -93,4 +94,8 @@ def _update_locations(db):
 
 
 if __name__ == '__main__':
-    print(main(update=False, vaccine="Vaxzevria"))
+    start = datetime.now()
+    main(update=False, vaccine="Vaxzevria")
+    end = datetime.now()
+    print("\n \n \n \n")
+    print((end - start).total_seconds())
