@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from time import sleep
 from tqdm import tqdm
 from config import URL_VACCENTERS, REGIONS, CENTER_TYPE, VACCINES, CSV_VACCENTERS, ADRESA2GPS
-from data_classes import VaccCenter
+from tools.data_classes import VaccCenter
 
 class VaccCentersScraper():
     url = URL_VACCENTERS

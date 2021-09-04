@@ -1,13 +1,13 @@
 import heapq as hq
 from geopy import distance
-from database_connector import DatabaseConnector
-from vaccination_centers_scrapper import VaccCentersScraper
-from location_scraper import LocationsScrapper
-from query_creator import create_query
-from data_classes import VaccCenter
+from tools.database_connector import DatabaseConnector
+from tools.vaccination_centers_scrapper import VaccCentersScraper
+from tools.location_scraper import LocationsScrapper
+from tools.query_creator import create_query
+from tools.data_classes import VaccCenter
 from config import FINAL_QUERY
 from datetime import datetime
-from printer import print_output
+from tools.printer import print_output
 
 
 def give_me_three_centers(location, vaccine=None, age_group="adult", without_registration=None, self_payer=False,

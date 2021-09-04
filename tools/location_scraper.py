@@ -1,10 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
-import pandas as pd
 from time import sleep
 from tqdm import tqdm
 from config import BASE_URL, PRAGUE_URL, LOCATIONS_URL, WRONG_WIKI
-from data_classes import Location
+from tools.data_classes import Location
 
 
 class LocationsScrapper:
