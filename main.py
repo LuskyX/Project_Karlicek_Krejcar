@@ -7,10 +7,13 @@ from query_creator import create_query
 from data_classes import VaccCenter
 from config import FINAL_QUERY
 from datetime import datetime
+from printer import print_output
 
 
-def main(location="Praha 3", vaccine=None, age_group="adult", without_registration=None, self_payer=False, monday=None,
-         tuesday=None, wednesday=None, thursday=None, friday=None, saturday=None, sunday=None, update=False):
+def give_me_three_centers(location, vaccine=None, age_group="adult", without_registration=None, self_payer=False,
+                          monday=None, tuesday=None, wednesday=None, thursday=None, friday=None, saturday=None,
+                          sunday=None, update=False):
+
     db = DatabaseConnector(update=update)
     if update:
         _update_vacc_centers(db)
@@ -25,13 +28,14 @@ def main(location="Praha 3", vaccine=None, age_group="adult", without_registrati
         vacc_ids = [center[0] for center in centers_gps]
     else:
         location_gps = _get_location_gps(db, location)
-        vacc_ids = three_closest_centers(location_gps, centers_gps)
+        vacc_ids = calc_three_closest_centers(location_gps, centers_gps)
     final_centers = _get_vaccine_centers(db, vacc_ids)
     for center in final_centers:
-        print(center)
+        print_output(center)
+    return final_centers
 
 
-def three_closest_centers(location: tuple, centers: list) -> list:
+def calc_three_closest_centers(location: tuple, centers: list) -> list:
     """
     :param coords: A tuple of both latitude and longitude of a given center
     :param other_centers: A list of tuples containing longitude and latitude of all other centers
@@ -95,7 +99,7 @@ def _update_locations(db):
 
 if __name__ == '__main__':
     start = datetime.now()
-    main(update=False, vaccine="Vaxzevria")
+    give_me_three_centers(update=False, vaccine="Vaxzevria")
     end = datetime.now()
     print("\n \n \n \n")
     print((end - start).total_seconds())
