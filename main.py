@@ -38,7 +38,7 @@ def give_me_three_centers(location, vaccine=None, age_group="adult", without_reg
                          friday, saturday, sunday)
     centers_gps = db.get_data(query)
     if len(centers_gps) == 0:
-        raise Exception()
+        raise Exception('No centers for given input. Try different settings')
     elif len(centers_gps) <= 3:
         vacc_ids = [center[0] for center in centers_gps]
     else:
@@ -96,7 +96,7 @@ def _get_location_gps(db, location: str) -> tuple:
     WHERE name = "{location}"
     """
     location_gps = db.get_data(query_loc)
-    if len(location_gps) == 0: raise Exception
+    if len(location_gps) == 0: raise Exception('No data for this location.')
     return location_gps[0]
 
 
