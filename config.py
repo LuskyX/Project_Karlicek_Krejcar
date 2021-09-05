@@ -1,3 +1,5 @@
+# We store there some variables so our code don't get messy
+
 # database_connector
 DB_FILE = "db/database.db"
 
