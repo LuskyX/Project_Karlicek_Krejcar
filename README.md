@@ -1,8 +1,9 @@
 # Project_Karlicek_Krejcar
-Data Processing in Python Project
+**Data Processing in Python Project**
+
 This is a repository for our Data Processing in Python project. Collaborative work of Vilém Krejcar and Ondřej Karlíček. 
 
-# Finding nearest vaccination centers
+# Finding the nearest vaccination centers
 
 Based on arguments given by the user (more below), our program finds three nearest vaccination centers.
 
@@ -12,7 +13,7 @@ where we get GPS coordinates of vaccination centers.
 
 Also, we are scraping Wikipedia to obtain GPS coordinates of municipalities in the Czech Republic.
 
-All data are then stored in the SQLlite3 database.
+All data are further stored in the SQLlite3 database.
 
 
 ## Project structure
@@ -82,7 +83,7 @@ All data are then stored in the SQLlite3 database.
     * if "True" -> it downloads data and updates the database
     
 
-## Update
+## Updates
 
 For update set `update=True`. It should take around 70 minutes.
 
@@ -92,5 +93,4 @@ Simply open the **presentation.ipynb** and run `give_me_three_centers` from `mai
 
 
 ## Requirements
-
 tqdm, requests, beautifulsoup4, mechanicalsoup
