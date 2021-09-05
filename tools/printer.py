@@ -1,5 +1,10 @@
+from tools.data_classes import VaccCenter
 
-def print_output(center):
+
+def print_output(center: VaccCenter):
+    """
+    for given center it prints out output with all informations
+    """
     center = transform_open_hours(center)
 
     output = f"""
@@ -37,13 +42,19 @@ ________________________________________________________________________________
     print(output)
 
 
-def transform_open_hours(center):
+def transform_open_hours(center: VaccCenter) -> VaccCenter:
+    """
+    transform open_hour dict in center that the decimal format of hours is now string "HH:MM"
+    """
     for day in center.open_hours:
         center.open_hours[day] = [decimal_to_hour(center.open_hours[day][0]), decimal_to_hour(center.open_hours[day][1])]
     return center
 
 
-def decimal_to_hour(decimal):
+def decimal_to_hour(decimal: float) -> str:
+    """
+    Transform decimal format of hours to HH:MM
+    """
     if decimal is None:
         time = "None "
     else:

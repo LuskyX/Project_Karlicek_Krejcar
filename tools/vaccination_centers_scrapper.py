@@ -8,14 +8,21 @@ from tqdm import tqdm
 from config import URL_VACCENTERS, REGIONS, CENTER_TYPE, VACCINES, CSV_VACCENTERS, ADRESA2GPS
 from tools.data_classes import VaccCenter
 
+
 class VaccCentersScraper():
+    """
+    This class searches for all vaccination centers in CZE and scrapes information about them
+    """
     url = URL_VACCENTERS
 
-    def __init__(self, regions=REGIONS):
+    def __init__(self, regions: list = REGIONS):
         self.regions = regions
         self.vacc_centers = []
 
     def get_links(self):
+        """
+        get links for vaccination centers from https://ockoreport.uzis.cz/
+        """
         browser = mechanicalsoup.StatefulBrowser(raise_on_404=True)
         for reg in self.regions:
             browser.open(self.url)
@@ -28,6 +35,9 @@ class VaccCentersScraper():
         return None
 
     def get_information_about_centers(self):
+        """
+        From links of the centers extract all possible information using methods of this class
+        """
         for center in tqdm(self.vacc_centers):
             soup = BeautifulSoup(requests.get(center.link).text.strip(), features="lxml")
             center.add_info(self._extract_info_from_soup(soup))
@@ -37,6 +47,9 @@ class VaccCentersScraper():
         return None
 
     def get_gps_of_centers(self):
+        """
+        get coordinates for centers using dataset from https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19
+        """
         data = pd.read_csv(CSV_VACCENTERS)[['ockovaci_misto_id', 'latitude', 'longitude']].set_index('ockovaci_misto_id')
         vacc_ids = set(data.index)
         no_data = []
@@ -53,7 +66,11 @@ class VaccCentersScraper():
         self.vacc_centers = [center for center in self.vacc_centers if len(center.gps) != 0]
         return None
 
-    def _extract_links_from_soup(self, soup, region):
+    def _extract_links_from_soup(self, soup: BeautifulSoup, region: str):
+        """
+        get links from the given soup, also select part of soup with information about type of the center,
+        finally initialize VaccCenter and store them in self.vacc_centers
+        """
         centers_div = soup.select('div[class=center__container]')
         for center in centers_div:
             name = center.select_one('span[class=center__name]').text
@@ -65,7 +82,10 @@ class VaccCentersScraper():
         return None
 
     @staticmethod
-    def _get_type_of_center(type_soup):
+    def _get_type_of_center(type_soup: BeautifulSoup):
+        """
+        Extract center_type from given soup
+        """
         center_type = copy.deepcopy(CENTER_TYPE)
         types = type_soup.find_all('span') + type_soup.find_all('img')
         types = set([typ['title'] for typ in types])
@@ -82,7 +102,10 @@ class VaccCentersScraper():
         return center_type
 
     @staticmethod
-    def _extract_info_from_soup(soup):
+    def _extract_info_from_soup(soup: BeautifulSoup):
+        """
+        From soup extracts main info about center
+        """
         table_info = soup.select('div[class=info] > table > tbody > tr')
         info = {i.select_one('td:nth-child(1)').text: i.select_one('td:nth-child(2)').text.replace("\r\n", "")
                 for i in table_info[0:4]}
@@ -100,14 +123,20 @@ class VaccCentersScraper():
         return info
 
     @staticmethod
-    def _extract_vaccines(info):
+    def _extract_vaccines(info: dict):
+        """
+        extracts vaccines available in the given center
+        """
         vaccines = copy.deepcopy(VACCINES)
         for vac in info['Vakcíny']:
             vaccines[vac.split('/')[0]] = 1
         return vaccines
 
     @staticmethod
-    def _extract_open_hours_from_soup(soup):
+    def _extract_open_hours_from_soup(soup: BeautifulSoup):
+        """
+        From soup extracts open hours in center
+        """
         open_table = soup.select('div[class=detail__aside] > div[class=opening] > table > tbody > tr')
         open_table = {i.select_one('td:nth-child(1)').text: i.select_one('td:nth-child(2)').text.strip().replace(" ", "")
                       for i in open_table}

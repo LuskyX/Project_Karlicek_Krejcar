@@ -8,12 +8,8 @@ from tools.data_classes import Location
 
 class LocationsScrapper:
     """
-    This functions searches for all possible town names in CR and scrapes Wikipedia for their Latitude and Longitude,
-    which will be further used in the project. It collects the data and assemblies a pd.DataFrame, which was further
-    stored in .csv format. Function prints out the progress - it takes circa 45 minutes to complete the scraping,
-    so the dataset was manually imported into the repository for simplicity.
-
-    Input: Due to the monotonous objective of the function, no input needed.
+    This class searches for all possible town names in CZE and scrapes Wikipedia for their Latitude and Longitude,
+    which will be further used in the project.
     """
     url = BASE_URL
     url_prague = BASE_URL + PRAGUE_URL
@@ -24,7 +20,9 @@ class LocationsScrapper:
         self.locations = []
 
     def get_links(self):
-
+        """
+        Downloads links for town in CZ and links for parts of Prague, store them in self.links
+        """
         soup = BeautifulSoup(requests.get(self.locations_url).text.strip(), features="lxml")
         for region in soup.select('td[class="navbox-list navbox-odd"]'):
             self.links.extend(region.div.find_all('a'))
@@ -38,7 +36,10 @@ class LocationsScrapper:
         self.links.append(self.url_prague)
         return None
 
-    def get_gps(self):
+    def get_gps(self) -> None:
+        """
+        download location coordinates from self.links, then create instance of Location and store it in self.locations
+        """
         for link in tqdm(self.links):
             soup = BeautifulSoup(requests.get(link).text.strip(), features="lxml")
             name = soup.h1.text
@@ -55,7 +56,10 @@ class LocationsScrapper:
         return None
 
     @staticmethod
-    def _prepare_to_convert(coordinates: str) -> list:
+    def _prepare_to_convert(coordinates: str) -> tuple:
+        """
+        Converts string of coordinates to tuple of ints
+        """
         degrees, minutes, seconds = True, True, True
 
         if coordinates == coordinates.replace("°", " "): degrees = False
@@ -75,6 +79,9 @@ class LocationsScrapper:
 
     @staticmethod
     def _degrees_to_decimal(degrees: int = 0, minutes: int = 0, seconds: int = 0) -> float:
+        """
+        Converts degree format to decimal format
+        """
         result = 0
         result += degrees
         result += minutes / 60

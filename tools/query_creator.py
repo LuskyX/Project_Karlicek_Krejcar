@@ -3,6 +3,9 @@ from config import VACCINES_SET, AGE_GROUP_SET
 
 def create_query(vaccine=None, age_group="adult", without_registration=None, self_payer=False, monday=None,
                  tuesday=None, wednesday=None, thursday=None, friday=None, saturday=None, sunday=None):
+    """
+    Based on given paramaters create query for SQL filtering
+    """
 
     open_hours = {'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday, 'thursday': thursday, 'friday': friday,
                   'saturday': saturday, 'sunday': sunday}

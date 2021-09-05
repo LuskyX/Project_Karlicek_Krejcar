@@ -13,7 +13,22 @@ from tools.printer import print_output
 def give_me_three_centers(location, vaccine=None, age_group="adult", without_registration=None, self_payer=False,
                           monday=None, tuesday=None, wednesday=None, thursday=None, friday=None, saturday=None,
                           sunday=None, update=False):
+    """
+    Based on specified arguments it finds and returns 3 closest vaccination centers. If update=True, it will firstly
+    download the data and update the database
 
+    Args:
+      location (str): name of town in CZE.
+      vaccine (str): name of wanted vaccine. Defaults to None.
+      age_group (str): your age_group - "adult", "teenage", "child". Defaults to "adult".
+      without_registration (bool): if you want center without registration set True. Defaults to None.
+      self_payer (bool): set True if you want center for self-payers. Defaults to False.
+      monday, tuesday, ... (float): specify your desired hour in the given day. Defaults to None.
+      update (bool): set True if you want to download data and update the database. Defaults to False.
+
+    Returns:
+      three closest centers: list[VaccCenter]
+    """
     db = DatabaseConnector(update=update)
     if update:
         _update_vacc_centers(db)
@@ -37,11 +52,9 @@ def give_me_three_centers(location, vaccine=None, age_group="adult", without_reg
 
 def calc_three_closest_centers(location: tuple, centers: list) -> list:
     """
-    :param coords: A tuple of both latitude and longitude of a given center
-    :param other_centers: A list of tuples containing longitude and latitude of all other centers
-    :param display_distances: If True, it also prints out the values of the calculated smallest distances
-    :return: returns a list of three centers which are the closest from centre defined by coords (list[0] being the closest one)
-    For the calculation of three smallest numbers, we used a Heap and Heapsort thanks to its low time and space complexity.
+    For location it will find 3 closest centers. For the calculation of three smallest numbers,
+    we used a Heap and Heapsort thanks to its low time and space complexity.
+    Function returns a list of three centers which are the closest from centre defined by coords (list[0] being the closest one)
     """
     distances = []
     for center in centers:
@@ -54,7 +67,11 @@ def calc_three_closest_centers(location: tuple, centers: list) -> list:
     return [center[0] for center in result]
 
 
-def _get_vaccine_centers(db, vacc_ids):
+def _get_vaccine_centers(db, vacc_ids: list) -> list:
+    """
+    based on list of vacc_ids it will download from db information about vaccination centers and store them in VaccCenter.
+    Return them as list
+    """
     centers = []
     for vacc_id in vacc_ids:
         query = FINAL_QUERY + f'"{vacc_id}"'
@@ -69,7 +86,10 @@ def _get_vaccine_centers(db, vacc_ids):
     return centers
 
 
-def _get_location_gps(db, location):
+def _get_location_gps(db, location: str) -> tuple:
+    """
+    for given location it will download its coordinates from db
+    """
     query_loc = f"""
     SELECT latitude, longitude
     FROM locations
@@ -81,6 +101,9 @@ def _get_location_gps(db, location):
 
 
 def _update_vacc_centers(db):
+    """
+    updates data about vaccination centers
+    """
     vacc_scrap = VaccCentersScraper()
     vacc_scrap.get_links()
     vacc_scrap.get_information_about_centers()
@@ -90,6 +113,9 @@ def _update_vacc_centers(db):
 
 
 def _update_locations(db):
+    """
+    update data about locations in CZE
+    """
     loc_scrap = LocationsScrapper()
     loc_scrap.get_links()
     loc_scrap.get_gps()
